@@ -48,9 +48,14 @@ async function run() {
 
     // services 
     app.get("/services", async (req, res) => {
+      // console.log(req.query.email);
+      let query = {}; 
+      if (req.query?.email) {
+        query = { Email: req.query.email }; 
+      }
       const page = parseInt(req.query.page)
       const size = parseInt(req.query.size)
-      const result = await  servicesCollection.find()
+      const result = await  servicesCollection.find(query)
       .skip(page * size)
       .limit(size)
       .toArray();
@@ -86,10 +91,15 @@ async function run() {
     });
 
     app.get("/order", async (req, res) => {
-      const cursor = orderCollection.find();
-      const result = await cursor.toArray();
+      // console.log(req.query.email);
+      let query = {}; 
+      if (req.query?.email) {
+        query = { Email: req.query.email }; 
+      }
+      const result = await orderCollection.find(query).toArray();
       res.send(result);
     });
+    
 
     app.delete("/order/:id", async (req, res) => {
       const id = req.params.id;
