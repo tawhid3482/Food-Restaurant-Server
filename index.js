@@ -28,7 +28,7 @@ async function run() {
 
     const orderCollection = client.db("serviceDB").collection("orders");
 
-    const wishCollection = client.db("wishDB").collection("wish");
+    // const wishCollection = client.db("wishDB").collection("wish");
 
     app.get("/service", async (req, res) => {
       const cursor = serviceCollection.find();
@@ -66,7 +66,7 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = {
-        projection: { title: 1, price: 1, service_id: 1, foodImage: 1,foodName:1,quantity:1 },
+        projection: { title: 1, price: 1, service_id: 1, foodImage: 1,foodName:1,quantity:1, foodCategory:1 },
       };
       const result = await servicesCollection.findOne(query, options);
       res.send(result);
@@ -78,6 +78,33 @@ async function run() {
       const result = await servicesCollection.insertOne(posting);
       res.send(result);
     });
+
+
+   app.put("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: id };
+      const options = { upsert: true };
+      const updateProduct = req.body;
+      const updatedProducts = {
+        $set: {
+          foodName: updateProduct.foodName,
+          foodCategory: updateProduct.foodCategory,
+          price: updateProduct.price,
+          quantity: updateProduct.quantity,
+          foodOrigin: updateProduct.foodOrigin,
+          Description: updateProduct.Description,
+          foodImage: updateProduct.foodImage,
+          Email: updateProduct.Email,
+        },
+      };
+      const result = await servicesCollection.updateOne(
+        query,
+        updatedProducts,
+        options
+      );
+      res.send(result);
+    });
+
 
     app.get('/servicesCount', async(req,res)=>{
       const count = await servicesCollection.estimatedDocumentCount()
@@ -109,31 +136,31 @@ async function run() {
     });
 
 
-    app.post("/wish", async (req, res) => {
-      const posting = req.body;
-      const result = await wishCollection.insertOne(posting);
-      res.send(result);
-    });
+    // app.post("/wish", async (req, res) => {
+    //   const posting = req.body;
+    //   const result = await wishCollection.insertOne(posting);
+    //   res.send(result);
+    // });
 
-    app.patch("/wish/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: new ObjectId(id) };
-      const updated = req.body;
-      const updateDoc = {
-        $set: {
-          status: updated.status,
-        },
-      };
-      const result = await wishCollection.updateOne(filter, updateDoc);
-      res.send(result);
-    });
+    // app.patch("/wish/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: new ObjectId(id) };
+    //   const updated = req.body;
+    //   const updateDoc = {
+    //     $set: {
+    //       status: updated.status,
+    //     },
+    //   };
+    //   const result = await wishCollection.updateOne(filter, updateDoc);
+    //   res.send(result);
+    // });
 
-    app.delete("/wish/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await wishCollection.deleteOne(query);
-      res.send(result);
-    });
+    // app.delete("/wish/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await wishCollection.deleteOne(query);
+    //   res.send(result);
+    // });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
