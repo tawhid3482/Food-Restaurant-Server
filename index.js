@@ -159,7 +159,7 @@ async function run() {
     //   const id = req.params.id;
     //   const query = { _id: new ObjectId(id) };
     //   const result = await wishCollection.deleteOne(query);
-    //   res.send(resul
+    //   res.send(res
 
     await client.db("admin").command({ ping: 1 });
     console.log(
