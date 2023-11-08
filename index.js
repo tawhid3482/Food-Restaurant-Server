@@ -169,7 +169,7 @@ async function run() {
     console.error("Error connecting to MongoDB:", error);
   } finally {
     // Ensure the client is properly closed
-    // await client.close();
+    // await client.close()
   }
 }
 
